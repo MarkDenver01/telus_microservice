@@ -1,0 +1,61 @@
+services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - react-frontend
+      - php-backend
+      - java-backend
+
+  react-frontend:
+    build:
+      context: ./react-frontend
+    ports:
+      - "3000:3000"
+    command: sh -c "npm install && npm run dev"
+    volumes:
+      - ./react-frontend:/app
+    working_dir: /app
+
+  php-backend:
+    build:
+      context: ./php-backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./php-backend:/var/www/html
+    depends_on:
+      - db
+
+  java-backend:
+    build:
+      context: ./java-backend
+    ports:
+      - "8080:8080"
+    depends_on:
+      - java-db
+
+  db:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: symfony
+    volumes:
+      - db_data:/var/lib/mysql
+
+  java-db:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: springdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - java_db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data:
+  java_db_data:
