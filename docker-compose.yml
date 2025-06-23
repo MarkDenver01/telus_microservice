@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   nginx:
     image: nginx:latest
@@ -22,40 +24,57 @@ services:
 
   php-backend:
     build:
-      context: ./php-backend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: php-backend/Dockerfile
     ports:
       - "8000:8000"
     volumes:
       - ./php-backend:/var/www/html
+      - ./wait-for-it.sh:/wait-for-it.sh
     depends_on:
       - db
+    command: ["/wait-for-it.sh", "db:3306", "--", "php", "-S", "0.0.0.0:8000", "-t", "public"]
 
   java-backend:
     build:
-      context: ./java-backend
+      context: .
+      dockerfile: java-backend/Dockerfile
     ports:
       - "8080:8080"
+    volumes:
+      - ./wait-for-it.sh:/wait-for-it.sh
     depends_on:
-      - java-db
+      - db
+    command: ["/wait-for-it.sh", "db:3306", "--", "java", "-jar", "app.jar"]
 
   db:
-    image: mysql:8
+    image: mysql:8.0
+    container_name: mysql
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: symfony
+      MYSQL_DATABASE: app_db
+    ports:
+      - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
+      - ./db_sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-  java-db:
-    image: postgres:13
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    restart: always
+    ports:
+      - "8081:80"
     environment:
-      POSTGRES_DB: springdb
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    volumes:
-      - java_db_data:/var/lib/postgresql/data
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: root
+    depends_on:
+      - db
 
 volumes:
   db_data:
-  java_db_data:
