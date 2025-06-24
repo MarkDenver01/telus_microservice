@@ -9,7 +9,6 @@ services:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
     depends_on:
       - react-frontend
-      - php-backend
       - java-backend
 
   react-frontend:
@@ -21,19 +20,6 @@ services:
     volumes:
       - ./react-frontend:/app
     working_dir: /app
-
-  php-backend:
-    build:
-      context: .
-      dockerfile: php-backend/Dockerfile
-    ports:
-      - "8000:8000"
-    volumes:
-      - ./php-backend:/var/www/html
-      - ./wait-for-it.sh:/wait-for-it.sh
-    depends_on:
-      - db
-    command: ["/wait-for-it.sh", "db:3306", "--", "php", "-S", "0.0.0.0:8000", "-t", "public"]
 
   java-backend:
     build:

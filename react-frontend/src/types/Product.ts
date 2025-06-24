@@ -1,5 +1,7 @@
-export interface Product {
+
+export interface Product{
     id: number;
+    thumbnail: string;
     title: string;
     brand: string;
     category: string;
@@ -7,5 +9,4 @@ export interface Product {
     rating: number;
     stock: number;
     shippingInformation: string;
-    thumbnail?: string;
-}
+ }
