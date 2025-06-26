@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -15,7 +16,7 @@ import java.util.Optional;
 public class ProductController {
     private final ProductService productService;
 
-    @GetMapping("/products")
+    @GetMapping("/products/page")
     public PageResponse<ProductDto> getProducts(@RequestParam(required = false) String query,
                                                 @RequestParam(defaultValue = "0") int page,
                                                 @RequestParam(defaultValue = "10") int size) {
@@ -45,5 +46,10 @@ public class ProductController {
                                           @RequestParam(defaultValue = "0") int page,
                                           @RequestParam(defaultValue = "10") int size) {
         return productService.search(q, page, size);
+    }
+
+    @GetMapping("/products")
+    public List<ProductDto> getAllProducts() {
+        return productService.getAllProducts();
     }
 }

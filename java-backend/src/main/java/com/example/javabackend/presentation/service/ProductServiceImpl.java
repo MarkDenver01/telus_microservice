@@ -12,8 +12,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -68,5 +70,17 @@ public class ProductServiceImpl implements ProductService {
                 return ProductMapper.toDto(product);
             }
         });
+    }
+
+    @Override
+    public List<ProductDto> getAllProducts() {
+        return productRepository.findAll()
+                .stream()
+                .map(new Function<Product, ProductDto>() {
+                    @Override
+                    public ProductDto apply(Product product) {
+                        return ProductMapper.toDto(product);
+                    }
+                }).collect(Collectors.toList());
     }
 }
