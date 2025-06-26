@@ -17,7 +17,7 @@ export const fetchPaginatedProduct = async (
     page: number,
     size: number
 ): Promise<{ content: Product[]; totalPages: number }> => {
-    const res = await axiosInstance.get('/public/products', {
+    const res = await axiosInstance.get('/public/products/page', {
         params: { query, page, size },
     });
     return res.data;
