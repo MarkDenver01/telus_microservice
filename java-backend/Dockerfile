@@ -1,10 +1,13 @@
-FROM eclipse-temurin:17-jdk-alpine
+FROM openjdk:21-jdk-slim
+
 WORKDIR /app
 
-COPY wait-for-it.sh /wait-for-it.sh
-RUN chmod +x /wait-for-it.sh
+# Install netcat for wait-for-it.sh
+RUN apt-get update && apt-get install -y netcat-openbsd && rm -rf /var/lib/apt/lists/*
 
-COPY java-backend/target/java-backend-0.0.1-SNAPSHOT.jar app.jar
+COPY . .
+RUN chmod +x mvnw wait-for-it.sh
+RUN ./mvnw clean package -DskipTests
+
 EXPOSE 8080
-
-ENTRYPOINT ["/wait-for-it.sh", "db:3306", "--", "java", "-jar", "app.jar"]
+ENTRYPOINT ["./wait-for-it.sh", "db:3306", "--", "java", "-jar", "target/java-backend-0.0.1-SNAPSHOT-0.0.1-SNAPSHOT.jar"]

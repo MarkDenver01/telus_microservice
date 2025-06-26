@@ -1,9 +1,10 @@
 package com.example.javabackend.presentation.service;
 
-import com.example.javabackend.data.repository.ProductRepository;
-import com.example.javabackend.domain.dto.ProductDto;
 import com.example.javabackend.domain.entity.Product;
+import com.example.javabackend.domain.repository.ProductRepository;
 import com.example.javabackend.domain.service.ProductService;
+import com.example.javabackend.dto.ProductDto;
+import com.example.javabackend.mapper.ProductMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -11,68 +12,61 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+import java.util.function.Function;
 
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
-
-   private final ProductRepository productRepository;
+    private final ProductRepository productRepository;
 
     @Override
     public Page<ProductDto> list(String query, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
-        Page<Product> productPage = productRepository.findByTitleContainingIgnoreCase(query==null ? "" : query, pageable);
-        return productPage.map(product -> new ProductDto(
-                product.getId(),
-                product.getTitle(),
-                product.getBrand(),
-                product.getCategory(),
-                product.getThumbnail(),
-                product.getShippingInformation(),
-                product.getPrice(),
-                product.getRating(),
-                product.getStock()
-        ));
+        Pageable pageable = PageRequest.of(page, size, Sort
+                .by("id").descending());
+        return productRepository
+                .findByTitleContainingIgnoreCase(query == null ? "" : query,
+                        pageable)
+                .map(new Function<Product, ProductDto>() {
+                    @Override
+                    public ProductDto apply(Product product) {
+                        return ProductMapper.toDto(product);
+                    }
+                });
     }
 
     @Override
-    public ProductDto getById(Long id) {
+    public Optional<ProductDto> getById(Long id) {
         return productRepository.findById(id)
-                .map(this::toProductDto)
-                .orElse(null);
+                .map(new Function<>() {
+                    @Override
+                    public ProductDto apply(Product product) {
+                        return ProductMapper.toDto(product);
+                    }
+                });
     }
 
     @Override
     public ProductDto save(ProductDto productDto) {
-        Product product = new Product(null,
-                productDto.getTitle(),
-                productDto.getBrand(),
-                productDto.getCategory(),
-                productDto.getThumbnail(),
-                productDto.getShippingInformation(),
-                productDto.getPrice(),
-                productDto.getRating(),
-                productDto.getStock()
-        );
-        return toProductDto(product);
+        return ProductMapper.toDto(productRepository.save(ProductMapper.toEntity(productDto)));
     }
 
-    /**
-     *  Map to product.
-     * @param product {@link Product}
-     * @return {@link ProductDto}
-     */
-    private ProductDto toProductDto(Product product) {
-        return new ProductDto(
-                product.getId(),
-                product.getTitle(),
-                product.getBrand(),
-                product.getCategory(),
-                product.getThumbnail(),
-                product.getShippingInformation(),
-                product.getPrice(),
-                product.getRating(),
-                product.getStock()
-        );
+    @Override
+    public Page<ProductDto> search(String query, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size,
+                Sort.by("id").descending());
+
+        String qStr = query.isEmpty() ? "" : query;
+
+        Page<Product> productPage = productRepository
+                .findByTitleContainingIgnoreCaseOrBrandContainingIgnoreCaseOrCategoryContainingIgnoreCase(
+                            qStr, qStr, qStr, pageable);
+
+        return productPage.map(new Function<Product, ProductDto>() {
+            @Override
+            public ProductDto apply(Product product) {
+                return ProductMapper.toDto(product);
+            }
+        });
     }
 }

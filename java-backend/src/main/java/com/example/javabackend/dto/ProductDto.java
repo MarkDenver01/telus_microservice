@@ -1,4 +1,4 @@
-package com.example.javabackend.domain.dto;
+package com.example.javabackend.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

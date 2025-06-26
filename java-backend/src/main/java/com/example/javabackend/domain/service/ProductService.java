@@ -1,10 +1,13 @@
 package com.example.javabackend.domain.service;
 
-import com.example.javabackend.domain.dto.ProductDto;
+import com.example.javabackend.dto.ProductDto;
 import org.springframework.data.domain.Page;
+
+import java.util.Optional;
 
 public interface ProductService {
     Page<ProductDto> list(String query, int page, int size);
-    ProductDto getById(Long id);
+    Optional<ProductDto> getById(Long id);
     ProductDto save(ProductDto productDto);
+    Page<ProductDto> search(String query, int page, int size);
 }
