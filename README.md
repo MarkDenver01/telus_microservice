@@ -11,7 +11,7 @@ A full stack web app built the following:
 
 ### Frontend
 
-- React
+- Vite + React
 - TypeScript
 - TailwindCSS
 - Flowbite (UI Components)
