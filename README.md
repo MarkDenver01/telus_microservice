@@ -99,14 +99,20 @@ frontend/
 ### Backend (Spring Boot)
 
 ```
-backend/
+java-backend/
   src/main/java/
     com/example/productapi/
-      controller/
+      config/
+      domain/
+          entity/
+          model/
+          repository/
+          service/
       dto/
-      model/
-      repository/
-      service/
+      mapper/
+      presentation/
+                controller/
+                service/
 ```
 
 ---
