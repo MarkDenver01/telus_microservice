@@ -35,7 +35,13 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 contactNumber,
                 deliveryDateStart: deliveryStart,
                 deliveryDateEnd: deliveryEnd,
-                products: selectedProducts.map((p) => ({ productId: p.id })),
+                products: selectedProducts.map((p) => ({
+                    productId: p.id,
+                    productTitle: p.title,
+                    price: p.price,
+                    quantity: p.stock,
+                    totalPrice: p.price * p.stock,
+                })),
             });
 
             setSuccessMsg(response.message || 'Checkout successful!');

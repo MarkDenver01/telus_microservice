@@ -1,5 +1,6 @@
 import axiosInstance from "./api_client";
 import type { Product } from "../types/Product";
+import type { CheckoutProduct } from "../types/Order";
 
 export const searchProduct = async (
     q: string,
@@ -41,7 +42,7 @@ export const checkoutOrder = async ({
     contactNumber: string;
     deliveryDateStart: string;
     deliveryDateEnd: string;
-    products: { productId: number }[];
+    products: CheckoutProduct[];
 }): Promise<{ message: string }> => {
     const res = await axiosInstance.post("/public/orders/checkout", {
         name,
