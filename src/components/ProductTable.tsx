@@ -9,12 +9,14 @@ import {
     TableRow,
 } from 'flowbite-react';
 
+
 interface ProductTableProps {
     //products: Product[] | undefined;
     products: Product[];
+    onCheckout: (product: Product) => void;
 }
 
-const ProductTable: React.FC<ProductTableProps> = ({ products }) => {
+const ProductTable: React.FC<ProductTableProps> = ({ products, onCheckout }) => {
     if (!products) {
         return (
             <div className="text-center py-10 text-gray-500">
@@ -69,6 +71,7 @@ const ProductTable: React.FC<ProductTableProps> = ({ products }) => {
                                     <button
                                         type="button"
                                         className="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2"
+                                        onClick={() => onCheckout(product)}
                                     >
                                         Check out
                                     </button>

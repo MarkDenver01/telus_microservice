@@ -7,6 +7,7 @@ import {
 } from '../api/product_api';
 import Pagination from '../components/Pagination';
 import ProductTable from '../components/ProductTable';
+import CheckoutModal from "../components/CheckOutModal";
 
 const LandingPage: React.FC = () => {
     const [products, setProducts] = useState<Product[]>([]);
@@ -15,6 +16,8 @@ const LandingPage: React.FC = () => {
     const [totalPages, setTotalPages] = useState(0);
     const [viewAll, setViewAll] = useState(false);
     const pageSize = 6;
+    const [selectedProducts, setSelectedProducts] = useState<Product[]>([]);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
         const loadProducts = async () => {
@@ -42,6 +45,11 @@ const LandingPage: React.FC = () => {
         setPage(0);
     };
 
+    const handleCheckout = (product: Product) => {
+        setSelectedProducts([product]); // single product for now
+        setIsModalOpen(true);
+    };
+
     return (
         <div className="p-4 mx-auto max-w-7xl">
             <h1 className="mb-6 text-3xl font-bold text-gray-800">Product Listings</h1>
@@ -63,7 +71,12 @@ const LandingPage: React.FC = () => {
                 </button>
             </div>
 
-            <ProductTable products={products} />
+            <ProductTable products={products} onCheckout={handleCheckout}/>
+            <CheckoutModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                selectedProducts={selectedProducts}
+            />
 
             {!viewAll && totalPages > 1 && (
                 <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />
