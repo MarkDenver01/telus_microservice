@@ -178,13 +178,13 @@ VALUES
 
 2. If java-backend-0.0.1-SNAPSHOT.jar cannot build in docker. Kindly go to maven/cmd/terminal -> type this command: mvn clean package -DskipTests
 3. If wait-for-it.sh respond a 'permission denied', please do this:
-Go to your terminal:
-Type chmod +x .\wait-for-it.sh
+**Go to your terminal:**
+- Type chmod +x .\wait-for-it.sh
 4. If you encounter a problem with the docker like for example, the UI is not responding even you already build front-end. Do the following:
-Go to your terminal:
-docker-compose down -v
-docker-compose build --no-cache
-docker-compose up
+** Go to your terminal:**
+- docker-compose down -v
+- docker-compose build --no-cache
+- docker-compose up
 
 ---
 
