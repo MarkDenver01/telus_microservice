@@ -1,14 +1,16 @@
 package com.example.javabackend.presentation.controller;
 
+import com.example.javabackend.domain.model.ProductRequest;
 import com.example.javabackend.domain.service.ProductService;
 import com.example.javabackend.dto.PageResponse;
 import com.example.javabackend.dto.ProductDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/public")
@@ -17,39 +19,58 @@ public class ProductController {
     private final ProductService productService;
 
     @GetMapping("/products/page")
-    public PageResponse<ProductDto> getProducts(@RequestParam(required = false) String query,
-                                                @RequestParam(defaultValue = "0") int page,
-                                                @RequestParam(defaultValue = "10") int size) {
-        Page<ProductDto> result = productService.list(
-                query, page, size);
-        return new PageResponse<>(
+    public ResponseEntity<PageResponse<ProductDto>> getProducts(
+            @RequestParam(required = false) String query,
+            @RequestParam(defaultValue = "0") int age,
+            @RequestParam(defaultValue =  "10") int size) {
+        Page<ProductDto> result = productService.list(query, age, size);
+
+        PageResponse<ProductDto> response = new PageResponse<>(
                 result.getContent(),
                 result.getNumber(),
                 result.getSize(),
                 result.getTotalPages(),
                 result.getTotalElements()
         );
-    }
-
-    @GetMapping("/products/{id}")
-    public Optional<ProductDto> getProductById( @PathVariable Long id) {
-        return productService.getById(id);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/products/add")
-    public ProductDto createProduct(@RequestBody ProductDto dto) {
-        return productService.save(dto);
+    public ResponseEntity<ProductDto> createProduct(@RequestBody ProductRequest productRequest) {
+        ProductDto create = productService.save(new ProductDto(
+                productRequest.getId(),
+                productRequest.getTitle(),
+                productRequest.getBrand(),
+                productRequest.getCategory(),
+                productRequest.getThumbnail(),
+                productRequest.getShippingInformation(),
+                productRequest.getPrice(),
+                productRequest.getRating(),
+                productRequest.getStock()
+        ));
+        return ResponseEntity.ok(create);
     }
 
     @GetMapping("/search")
-    public Page<ProductDto> searchProduct(@RequestParam String q,
-                                          @RequestParam(defaultValue = "0") int page,
-                                          @RequestParam(defaultValue = "10") int size) {
-        return productService.search(q, page, size);
+    public ResponseEntity<Page<ProductDto>> searchProducts(
+            @RequestParam String q,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Page<ProductDto> result = productService.search(q, page, size);
+        return ResponseEntity.ok(result);
     }
 
+
     @GetMapping("/products")
-    public List<ProductDto> getAllProducts() {
-        return productService.getAllProducts();
+    public ResponseEntity<List<ProductDto>> getAllProducts() {
+        List<ProductDto> products = productService.getAllProducts();
+        return new ResponseEntity<>(products, HttpStatus.OK);
+    }
+
+    @GetMapping("/products/{id}")
+    public ResponseEntity<ProductDto> getProductById(@PathVariable long id) {
+        return productService.getById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 }
