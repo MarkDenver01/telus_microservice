@@ -10,7 +10,8 @@ import {
 } from 'flowbite-react';
 
 interface ProductTableProps {
-    products: Product[] | undefined;
+    //products: Product[] | undefined;
+    products: Product[];
 }
 
 const ProductTable: React.FC<ProductTableProps> = ({ products }) => {

@@ -19,8 +19,8 @@ const LandingPage: React.FC = () => {
     useEffect(() => {
         const loadProducts = async () => {
             if (viewAll) {
-                const all = await fetchAllProducts();
-                setProducts(all);
+                const result = await fetchAllProducts();
+                setProducts(result);
                 setTotalPages(1);
                 setPage(0);
             } else if (search.trim()) {
@@ -51,6 +51,7 @@ const LandingPage: React.FC = () => {
                     type="text"
                     placeholder="Search by title, brand, or category"
                     value={search}
+                    disabled={viewAll}
                     onChange={handleSearchChange}
                     className="w-full p-3 border border-gray-300 shadow-sm rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
                 />

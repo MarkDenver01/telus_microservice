@@ -1,9 +1,9 @@
-import LandingPage from './pages/LandingPage';
+import AppRoutes from "./routes/Routes.tsx";
 
 const App: React.FC = () => {
   return (
     <main className="min-h-screen bg-gray-50">
-      <LandingPage />
+      <AppRoutes />
     </main>
   );
 };

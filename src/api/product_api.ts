@@ -25,5 +25,5 @@ export const fetchPaginatedProduct = async (
 
 export const fetchAllProducts = async (): Promise<Product[]> => {
     const res = await axiosInstance.get('/public/products');
-    return res.data.content; // Adjust if backend returns plain list
+    return res.data; // Adjust if backend returns plain list
 };
